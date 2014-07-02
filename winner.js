@@ -1,7 +1,36 @@
 var entrantCount = 0;
+var ticketCount = 0;
 var entrantList = [];
+var reader = new FileReader();
+var parsed_csv;
+
+var reveal_after = 25 * 1000; // becomes seconds
+    reveal_after = 5 * 1000;
+var random_max   = (reveal_after + 3000) / 2;
+
+var doc_width = $(document).width();
+var doc_height = $(document).height();
+
+
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top",
+        Math.max(0,
+            (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()
+        ) + "px"
+    );
+    this.css("left",
+        Math.max(0,
+            (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()
+        ) + "px"
+    );
+    return this;
+}
 
 window.onload = function() {
+    $( "#winner" ) .hide();
+    $( "#startMagic" ) .hide();
+
     var fileInput = document.getElementById('fileInput');
     var fileDisplayArea = document.getElementById('fileDisplayArea');
 
@@ -10,32 +39,107 @@ window.onload = function() {
         var textType = /text.*/;
 
         if (file.type.match(textType)) {
-            var reader = new FileReader();
-
             reader.onload = function(e) {
-                fileDisplayArea.innerText = reader.result;
-                var text_data = reader.result;
-                var parsed_csv=CSVToArray(reader.result);
+                $('#fileInputWell').fadeTo(1000, 0);
+                parsed_csv=CSVToArray(reader.result);
                 buildTicketList(parsed_csv);
+                $('#startMagic').show();
             }
 
             reader.readAsText(file);
-        } else {
-            fileDisplayArea.innerText = "File not supported!";
         }
     });
+
+    $("#magicButton").click(function(e) {
+        $("#startMagic").fadeTo(1000,0);
+        doTheMagic();
+    });
+}
+
+function doTheMagic() {
+    animateNames(parsed_csv);
+    setTimeout(function(){
+        winnerFromList(entrantList);
+    }, reveal_after);
+}
+
+function winnerFromList (entrantList) {
+    var winner = entrantList[Math.floor(Math.random()*entrantList.length)]
+    $( "#winner" )
+        .text(winner)
+    ;
+
+    $('#winner').center();
+
+    $( "#winner" )
+        .slideUp(5000)
+        .delay(4000)
+        .fadeIn(1000)
+        .textAnimation({
+            mode:'highlight',
+            baseColor:'black',
+            highlightColor:"#2FFF5F",
+            delay:35,
+            interval:0,
+        })
+    ;
+}
+
+function animateName(message){
+    newdiv = $('<div/>')
+    .css({
+        'font-size':'2em',
+        'font-weight':'bold',
+        'background-color':'transparent',
+        'border':'1px',
+    });
+
+    // make position sensitive to size and document's width
+    var posx = Math.floor(Math.random() * (doc_width - 200));
+    var posy = Math.floor(Math.random() * (doc_height - 50));
+
+    $('#appendPoint')
+        .append(newdiv)
+    ;
+
+    newdiv
+        .hide()
+        .html(message)
+        .addClass('entrantName')
+        .css({
+            'position':'absolute',
+            'left':posx+'px',
+            'top':posy+'px',
+        })
+        .fadeTo(randomTimeout(), .75)
+        .fadeOut(randomTimeout());
+}
+
+function randomTimeout() {
+    return Math.floor( Math.random() * random_max );
+}
+
+function animateNames(parsed_csv) {
+    for (var i in parsed_csv) {
+        var line=parsed_csv[i];
+        setTimeout(function(line) {
+            animateName(line[0]);
+        }, randomTimeout(), line);
+    }
 }
 
 function buildTicketList (parsed_csv) {
     for (var i in parsed_csv) {
         entrantCount++;
-
         var line=parsed_csv[i];
+
         for (var count=1; count<=line[1]; count++) {
             entrantList.push(line[0]);
+            ticketCount++;
         }
     }
-    console.log(entrantList);
+    $('#entrantCount').html(entrantCount);
+    $('#ticketCount').html(ticketCount);
 }
 
 function CSVToArray( strData, strDelimiter ){
