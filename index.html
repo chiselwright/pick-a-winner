@@ -16,29 +16,24 @@
 
   <body>
     <span id="appendPoint"></span>
-    <div class="container">
+    <div class="container" id="fileInputContainer">
         <div class="row">&nbsp;</div>
         <div class="row">
-            <div class="col-md-4 col-md-offset-4" id="fileInputRow">
-                <form class="well" id="fileInputWell">
-                    <input type="file" id="fileInput">
-                </form>
+            <div class="col-md-6 col-md-offset-2" id="fileInputRow">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                            Browse&hellip; <input type="file" id="fileInput">
+                        </span>
+                    </span>
+                    <input type="text" class="form-control" readonly>
+                </div>
+                    <span class="help-block">
+                        Choose a CSV file to upload.
+                    </span>
             </div>
         </div>
 
-        <div class="row" id="startMagic">
-            <div class="col-md-4 text-center">
-                Entrants: <span id="entrantCount">X</span>
-            </div>
-            <div class="col-md-4 text-center">
-                <button type="button" class="button btn-primary" id="magicButton">
-                Start The Magic
-                </button>
-            </div>
-            <div class="col-md-4 text-center">
-                Total Tickets: <span id="ticketCount">Y</span>
-            </div>
-        </div>
 
         <div class="row">
             <div class="col-md-12 text-center">
@@ -47,6 +42,29 @@
         </div>
 
       </div>
+    </div><!-- /.container -->
+
+    <div class="container" id="magicContainer">
+        <div class="row" id="startMagic">
+            <div class="col-md-4 text-center">
+                <button type="button" class="button btn-default">
+                    Entrants: <span id="entrantCount">X</span>
+                </button>
+            </div>
+            <div class="col-md-4 text-center">
+                <button type="button" class="button btn-primary" id="magicButton">
+                Start The Magic
+                </button>
+                    <span class="help-block">
+                        When you are ready to start the prize draw
+                    </span>
+            </div>
+            <div class="col-md-4 text-center">
+                <button type="button" class="button btn-default">
+                    Total Tickets: <span id="ticketCount">Y</span>
+                </button>
+            </div>
+        </div>
     </div><!-- /.container -->
 
 <style type="text/css">
@@ -58,6 +76,28 @@
         position:absolute;
         top:100px;
     }
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 999px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  background: red;
+  cursor: inherit;
+  display: block;
+}
+input[readonly] {
+  background-color: white !important;
+  cursor: text !important;
+}
 </style>
 
     <!-- Bootstrap core JavaScript

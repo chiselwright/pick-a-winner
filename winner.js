@@ -29,7 +29,7 @@ jQuery.fn.center = function () {
 
 window.onload = function() {
     $( "#winner" ) .hide();
-    $( "#startMagic" ) .hide();
+    $( "#magicContainer" ) .hide();
 
     var fileInput = document.getElementById('fileInput');
     var fileDisplayArea = document.getElementById('fileDisplayArea');
@@ -40,10 +40,11 @@ window.onload = function() {
 
         if (file.type.match(textType)) {
             reader.onload = function(e) {
-                $('#fileInputWell').fadeTo(1000, 0);
+                $('#fileInputRow').fadeTo(1000, 0);
                 parsed_csv=CSVToArray(reader.result);
                 buildTicketList(parsed_csv);
-                $('#startMagic').show();
+                $('#magicContainer').center();
+                $('#magicContainer').show();
             }
 
             reader.readAsText(file);
@@ -51,7 +52,7 @@ window.onload = function() {
     });
 
     $("#magicButton").click(function(e) {
-        $("#startMagic").fadeTo(1000,0);
+        $("#magicContainer").fadeTo(1000,0);
         doTheMagic();
     });
 }
@@ -224,3 +225,25 @@ function CSVToArray( strData, strDelimiter ){
     // Return the parsed data.
     return( arrData );
 }
+
+$(document).on('change', '.btn-file :file', function() {
+  var input = $(this),
+      numFiles = input.get(0).files ? input.get(0).files.length : 1,
+      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+  input.trigger('fileselect', [numFiles, label]);
+});
+
+$(document).ready( function() {
+    $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+
+        var input = $(this).parents('.input-group').find(':text'),
+            log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+        if( input.length ) {
+            input.val(log);
+        } else {
+            if( log ) alert(log);
+        }
+
+    });
+});
