@@ -6,7 +6,7 @@ var parsed_csv;
 
 var reveal_after = 25 * 1000; // becomes seconds
     reveal_after = 5 * 1000;
-var random_max   = (reveal_after + 3000) / 2;
+var random_max   = 6000;
 
 var doc_width = $(document).width();
 var doc_height = $(document).height();
@@ -121,11 +121,22 @@ function randomTimeout() {
 }
 
 function animateNames(parsed_csv) {
-    for (var i in parsed_csv) {
-        var line=parsed_csv[i];
-        setTimeout(function(line) {
-            animateName(line[0]);
-        }, randomTimeout(), line);
+    // loop enough times to fade names until the reveal
+    loops = Math.ceil( reveal_after/random_max );
+    // the time we need each loop to 'cover'
+    loop_ms = reveal_after / loops;
+
+    for (var c=0; c<loops; c++) {
+        // iterate over all the names we've parsed
+        for (var i in parsed_csv) {
+            var line=parsed_csv[i];
+            // make a call in the future to kick off the animation
+            setTimeout(
+                function(line) { animateName(line[0]); },
+                randomTimeout() + (c * loop_ms),
+                line
+            );
+        }
     }
 }
 
